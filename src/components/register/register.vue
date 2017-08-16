@@ -1,5 +1,5 @@
 <template>
-  <div class="register">
+  <div class="register" v-title data-title="注册">
     <el-steps :space="200" :active="active" class="steps">
       <el-step title="步骤 1" description="设置用户名和密码"></el-step>
       <el-step title="步骤 2" description="填写个人信息"></el-step>
@@ -40,7 +40,7 @@
           <el-upload
             name="avatar"
             class="avatar-uploader"
-            action="/uploadAvatar"
+            action="/uploadTemp"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload">
@@ -77,13 +77,7 @@
               :type="tag.type"
               :closable="true"
               :close-transition="false"
-              @close="handleClose(tag)">
-              {{tag.name}}
-
-
-
-
-
+              @close="handleClose(tag)">{{tag.name}}
             </el-tag>
             <el-input
               class="input-new-tag"
@@ -146,7 +140,7 @@
           <div class="msg1">感谢您的注册</div>
         </el-col>
       </el-row>
-      <div class="login"><router-link to="/login">点击登录</router-link></div>
+      <div class="gotoIndex">正在为您跳转...</div>
     </div>
   </div>
 </template>
@@ -457,11 +451,16 @@
 
           // get body data
           var result = response.body;
-          if (result === '1') {
+          if (result.result === '1') {
             this.step1 = false;
             this.step2 = false;
             this.step3 = false;
             this.rgsSuccess = true;
+            // 存一个self解决vue的变量在setTimeout内部失效的状况
+            var self = this;
+            setTimeout(function () {
+              router.push({path: '/' + self.ruleForm2.user});
+            }, 3000);
           }
         }, response => {
           // error callback
@@ -477,7 +476,9 @@
     margin: 50px auto
     padding: 30px
     width: 720px
+    background: #ffffff
     border: 1px solid #8492A6
+    border-radius: 5px
     .steps
       padding-left: 50px
     .step1
@@ -530,11 +531,8 @@
         font-size: 12px
         line-height: 25px
         color: #8492A6
-      .login
+      .gotoIndex
         margin: 50px auto
         text-align: center
-        a
-          color: #58B7FF
-          &:hover
-            color: #1D8CE0
+        color: #58B7FF
 </style>
